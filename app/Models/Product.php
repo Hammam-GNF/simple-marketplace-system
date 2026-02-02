@@ -16,6 +16,11 @@ class Product extends Model
         'category_id',
     ];
 
+    public function getFormattedPriceAttribute()
+    {
+        return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
