@@ -13,7 +13,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::with(['user', 'product'])->whereNotIn('status', ['cancelled'])->latest()->paginate(10);
+        $query = Transaction::with(['user', 'product'])->whereNotIn('status', ['cancelled'])->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
