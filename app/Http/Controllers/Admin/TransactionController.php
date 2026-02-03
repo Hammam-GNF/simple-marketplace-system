@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class TransactionController extends Controller
 {
@@ -37,6 +39,8 @@ class TransactionController extends Controller
                 'paid_at' => now(),
             ]);
         });
+
+        Mail::to($transaction->user->email)->send(new TransactionPaidMail($transaction));
 
         return back()->with('success', 'Transaction status updated.');
     }
