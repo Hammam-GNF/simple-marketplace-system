@@ -25,4 +25,19 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
+    public function canCancel()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function canPay()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function canConfirm()
+    {
+        return $this->status === 'awaiting_payment';
+    }
 }

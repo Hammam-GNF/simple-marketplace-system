@@ -58,6 +58,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::patch('/transactions/{transaction}/pay', [TransactionController::class, 'pay'])->name('transactions.pay');
     Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
 });
 

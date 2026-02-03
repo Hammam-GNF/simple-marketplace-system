@@ -34,10 +34,14 @@
                     <span class="px-2 py-1 rounded text-xs
                         @if($transaction->status === 'pending')
                             bg-yellow-100 text-yellow-700
+                        @elseif($transaction->status === 'awaiting_payment')
+                            bg-blue-100 text-blue-700
                         @elseif($transaction->status === 'paid')
                             bg-green-100 text-green-700
-                        @else
+                        @elseif($transaction->status === 'cancelled')
                             bg-red-100 text-red-700
+                        @else
+                            bg-gray-100 text-gray-600
                         @endif
                     ">
                         {{ ucfirst($transaction->status) }}
@@ -49,7 +53,7 @@
                 </td>
 
                 <td class="px-4 py-3 text-right">
-                    @if ($transaction->status === 'pending')
+                    @if ($transaction->canCancel())
                         <x-danger-button
                             x-data
                             x-on:click.prevent="$dispatch('open-modal', 'cancel-transaction-{{ $transaction->id }}')"
@@ -63,8 +67,22 @@
                     @else
                         —
                     @endif
-                </td>
 
+                    @if ($transaction->canPay())
+                        <x-secondary-button
+                            x-data
+                            x-on:click.prevent="$dispatch('open-modal', 'pay-transaction-{{ $transaction->id }}')"
+                        >
+                            Pay
+                        </x-secondary-button>
+
+                        @include('customer.transactions.partials.pay-transaction-modal', [
+                            'transaction' => $transaction
+                        ])
+                    @else
+                        —
+                    @endif
+                </td>
 
             </tr>
         @endforeach

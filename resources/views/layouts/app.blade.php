@@ -29,6 +29,27 @@
 
             <!-- Page Content -->
             <main>
+                @if (session('success'))
+                    <div class="mb-4">
+                        <x-auth-session-status
+                            :status="session('success')"
+                        />
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-4">
+                        <div class="rounded-md bg-red-50 p-4">
+                            <div class="text-sm text-red-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 {{ $slot }}
             </main>
         </div>

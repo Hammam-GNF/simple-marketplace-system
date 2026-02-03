@@ -27,7 +27,18 @@ class TransactionController extends Controller
 
         if ($product->stock < $request->qty) {
             return back()->withErrors([
-                'qty' => 'Stock tidak mencukupi'
+                'qty' => 'Product stock is not enough.'
+            ]);
+        }
+
+        $hasPending = Transaction::where('user_id', Auth::id())
+            ->where('product_id', $product->id)
+            ->whereIn('status', ['pending', 'awaiting_payment'])
+            ->exists();
+
+        if ($hasPending) {
+            return back()->withErrors([
+                'product' => 'You already have a pending transaction for this product.'
             ]);
         }
 
@@ -49,13 +60,34 @@ class TransactionController extends Controller
             ->with('success', 'Transaction created successfully.');
     }
 
+    public function pay(Transaction $transaction)
+    {
+        if ($transaction->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (!$transaction->canPay()) {
+            return back()->withErrors([
+                'status' => 'Only pending transactions can be paid.'
+            ]);
+        }
+
+        DB::transaction(function () use ($transaction) {
+            $transaction->update([
+                'status' => 'awaiting_payment',
+            ]);
+        });
+
+        return back()->with('success', 'Please proceed with payment.');
+    }
+
     public function cancel(Transaction $transaction)
     {
         if ($transaction->user_id !== Auth::id()) {
             abort(403);
         }
 
-        if ($transaction->status !== 'pending') {
+        if (!$transaction->canCancel()) {
             return back()->withErrors([
                 'status' => 'Only pending transactions can be cancelled.'
             ]);

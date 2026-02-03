@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::with(['user', 'product'])->latest();
+        $query = Transaction::with(['user', 'product'])->where(function ($query) {
+            $query->whereNull('expired_at')->orWhere('expired_at', '>', now());
+        })->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -22,19 +25,20 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Transaction $transaction)
+    public function update(Transaction $transaction)
     {
-        $data = $request->validate([
-            'status' => 'required|in:pending,paid,cancelled',
-        ]);
-
-        if ($transaction->status === 'cancelled') {
+        if (!$transaction->canConfirm()) {
             return back()->withErrors([
-                'status' => 'Cancelled transaction cannot be updated.'
+                'status' => 'Transaction is not ready for confirmation.'
             ]);
         }
 
-        $transaction->update($data);
+        DB::transaction(function () use ($transaction) {
+            $transaction->update([
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+        });
 
         return back()->with('success', 'Transaction status updated.');
     }

@@ -35,9 +35,16 @@
 
                 <td class="px-4 py-3 text-center">
                     <span class="px-2 py-1 rounded text-xs
-                        @if($transaction->status === 'pending') bg-yellow-100 text-yellow-700
-                        @elseif($transaction->status === 'paid') bg-green-100 text-green-700
-                        @else bg-red-100 text-red-700
+                        @if($transaction->status === 'pending')
+                            bg-yellow-100 text-yellow-700
+                        @elseif($transaction->status === 'awaiting_payment')
+                            bg-blue-100 text-blue-700
+                        @elseif($transaction->status === 'paid')
+                            bg-green-100 text-green-700
+                        @elseif($transaction->status === 'cancelled')
+                            bg-red-100 text-red-700
+                        @else
+                            bg-gray-100 text-gray-600
                         @endif
                     ">
                         {{ ucfirst($transaction->status) }}
@@ -49,17 +56,22 @@
                 </td>
 
                 <td class="px-4 py-3 text-right">
-                    <x-secondary-button
-                        x-data
-                        x-on:click.prevent="$dispatch('open-modal', 'update-status-{{ $transaction->id }}')"
-                    >
-                        Update Status
-                    </x-secondary-button>
+                    @if ($transaction->canConfirm())
+                        <x-primary-button
+                            x-data
+                            x-on:click.prevent="$dispatch('open-modal', 'confirm-transaction-{{ $transaction->id }}')"
+                        >
+                            Confirm Payment
+                        </x-primary-button>
 
-                    @include('admin.transactions.partials.update-status-form', [
-                        'transaction' => $transaction
-                    ])
+                        @include('admin.transactions.partials.confirm-transaction-modal', [
+                            'transaction' => $transaction
+                        ])
+                    @else
+                        —
+                    @endif
                 </td>
+
             </tr>
         @endforeach
     </tbody>
