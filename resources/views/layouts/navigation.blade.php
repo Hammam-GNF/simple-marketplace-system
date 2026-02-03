@@ -60,8 +60,8 @@
                                 {{ __('Dashboard') }}
                             </x-nav-link>
 
-                            <x-nav-link :href="route('customer.transactions.index')" :active="request()->routeIs('customer.transactions.index')">
-                                {{ __('Transactions') }}
+                            <x-nav-link :href="route('customer.products.index')" :active="request()->routeIs('customer.products.index')">
+                                {{ __('Products') }}
                             </x-nav-link>
                         @endif
                     @endauth

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,9 +49,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(function () {
-    
+    Route::get('/dashboard', function () {
+        return view('customer.dashboard');
+    })->name('dashboard');
 
-
+    Route::get('/products', [CustomerProductController::class, 'index'])->name('products.index');
 });
 
 require __DIR__.'/auth.php';
