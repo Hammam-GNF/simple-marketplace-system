@@ -67,10 +67,6 @@
                             <x-nav-link :href="route('customer.transactions.index')" :active="request()->routeIs('customer.transactions.index')">
                                 {{ __('My Orders') }}
                             </x-nav-link>
-                            
-                            <x-nav-link :href="route('customer.products.index')" :active="request()->routeIs('customer.products.index')">
-                                {{ __('Products') }}
-                            </x-nav-link>
 
                             <a
                                 href="{{ route('customer.products.index') }}"

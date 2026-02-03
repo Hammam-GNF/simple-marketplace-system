@@ -7,6 +7,7 @@
             <th class="px-4 py-3 text-right text-sm font-semibold">Total</th>
             <th class="px-4 py-3 text-center text-sm font-semibold">Status</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Date</th>
+            <th class="px-4 py-3 text-right text-sm font-semibold">Action</th>
         </tr>
     </thead>
 
@@ -46,6 +47,25 @@
                 <td class="px-4 py-3 text-right text-sm">
                     {{ $transaction->created_at->format('d M Y H:i') }}
                 </td>
+
+                <td class="px-4 py-3 text-right">
+                    @if ($transaction->status === 'pending')
+                        <x-danger-button
+                            x-data
+                            x-on:click.prevent="$dispatch('open-modal', 'cancel-transaction-{{ $transaction->id }}')"
+                        >
+                            Cancel
+                        </x-danger-button>
+
+                        @include('customer.transactions.partials.cancel-transaction-modal', [
+                            'transaction' => $transaction
+                        ])
+                    @else
+                        —
+                    @endif
+                </td>
+
+
             </tr>
         @endforeach
     </tbody>

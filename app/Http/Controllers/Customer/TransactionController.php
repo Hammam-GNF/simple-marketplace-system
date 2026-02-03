@@ -45,7 +45,30 @@ class TransactionController extends Controller
             $product->decrement('stock', $request->qty);
         });
         
-        return redirect()->route('customer.dashboard')
+        return redirect()->route('customer.transactions.index')
             ->with('success', 'Transaction created successfully.');
+    }
+
+    public function cancel(Transaction $transaction)
+    {
+        if ($transaction->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($transaction->status !== 'pending') {
+            return back()->withErrors([
+                'status' => 'Only pending transactions can be cancelled.'
+            ]);
+        }
+
+        DB::transaction(function () use ($transaction) {
+            $transaction->product->increment('stock', $transaction->qty);
+
+            $transaction->update([
+                'status' => 'cancelled',
+            ]);
+        });
+
+        return back()->with('success', 'Transaction cancelled.');
     }
 }
