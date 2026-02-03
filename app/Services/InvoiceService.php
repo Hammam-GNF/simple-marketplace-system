@@ -1,0 +1,18 @@
+<?
+
+namespace App\Services;
+
+use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+class InvoiceService
+{
+    public function generate(Transaction $transaction)
+    {
+        $transaction->load(['user', 'product']);
+
+        return Pdf::loadView('pdf.invoice', [
+            'transaction' => $transaction
+        ]);
+    }
+}
