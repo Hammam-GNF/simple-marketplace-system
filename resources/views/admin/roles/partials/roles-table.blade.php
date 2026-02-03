@@ -10,7 +10,7 @@
     <tbody class="divide-y divide-gray-200 bg-white">
         @foreach ($roles as $index => $role)
             <tr>
-                <td class="px-4 py-3">{{ $index + 1 }}</td>
+                <td class="px-4 py-3">{{ $roles->firstItem() + $index }}</td>
                 <td class="px-4 py-3">{{ $role->name }}</td>
                 <td class="px-4 py-3">{{ $role->description }}</td>
                 <td class="px-4 py-3 text-right space-x-2">

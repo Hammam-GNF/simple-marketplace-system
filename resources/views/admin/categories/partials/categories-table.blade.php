@@ -11,7 +11,7 @@
     <tbody class="divide-y divide-gray-200 bg-white">
         @foreach ($categories as $index => $category)
             <tr>
-                <td class="px-4 py-3">{{ $index + 1 }}</td>
+                <td class="px-4 py-3">{{ $categories->firstItem() + $index }}</td>
                 <td class="px-4 py-3">{{ $category->name }}</td>
                 <td class="px-4 py-3">{{ $category->description }}</td>
                 <td class="px-4 py-3 text-right space-x-2">

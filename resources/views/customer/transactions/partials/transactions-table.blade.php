@@ -7,6 +7,7 @@
             <th class="px-4 py-3 text-right text-sm font-semibold">Total</th>
             <th class="px-4 py-3 text-center text-sm font-semibold">Status</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Date</th>
+            <th class="px-4 py-3 text-right text-sm font-semibold">Expired Date</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Action</th>
         </tr>
     </thead>
@@ -15,7 +16,7 @@
         @foreach ($transactions as $index => $transaction)
             <tr>
                 <td class="px-4 py-3">
-                    {{ $index + 1 }}
+                    {{ $transactions->firstItem() + $index }}
                 </td>
 
                 <td class="px-4 py-3">
@@ -50,6 +51,10 @@
 
                 <td class="px-4 py-3 text-right text-sm">
                     {{ $transaction->created_at->format('d M Y H:i') }}
+                </td>
+
+                <td class="px-4 py-3 text-right text-sm">
+                    {{ optional($transaction->expired_at)->format('d M Y H:i') ?? '—' }}
                 </td>
 
                 <td class="px-4 py-3 text-right">

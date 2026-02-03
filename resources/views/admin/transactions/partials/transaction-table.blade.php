@@ -8,6 +8,7 @@
             <th class="px-4 py-3 text-right text-sm font-semibold">Total Price</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Status</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Created at</th>
+            <th class="px-4 py-3 text-right text-sm font-semibold">Paid at</th>
             <th class="px-4 py-3 text-right text-sm font-semibold">Action</th>
         </tr>
     </thead>
@@ -15,7 +16,9 @@
     <tbody class="divide-y divide-gray-200 bg-white">
         @foreach ($transactions as $index => $transaction)
             <tr>
-                <td class="px-4 py-3">{{ $index + 1 }}</td>
+                <td class="px-4 py-3">
+                    {{ $transactions->firstItem() + $index }}
+                </td>
 
                 <td class="px-4 py-3">
                     {{ $transaction->user->name }}
@@ -53,6 +56,10 @@
 
                 <td class="px-4 py-3 text-center text-sm">
                     {{ $transaction->created_at->format('d M Y H:i') }}
+                </td>
+
+                <td class="px-4 py-3 text-center text-sm">
+                    {{ optional($transaction->paid_at)->format('d M Y H:i') ?? '—' }}
                 </td>
 
                 <td class="px-4 py-3 text-right">

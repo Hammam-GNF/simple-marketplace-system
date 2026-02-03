@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class TransactionController extends Controller
 {
     public function index() {
-        $transactions = Transaction::with('product')->where('user_id', Auth::user()->id)->latest()->get();
+        $transactions = Transaction::with('product')->where('user_id', Auth::user()->id)->latest()->paginate(10);
         return view('customer.transactions.index', compact('transactions'));
     }
 
@@ -75,6 +75,7 @@ class TransactionController extends Controller
         DB::transaction(function () use ($transaction) {
             $transaction->update([
                 'status' => 'awaiting_payment',
+                'expired_at' => now()->addDays(3),
             ]);
         });
 

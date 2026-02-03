@@ -14,6 +14,13 @@ class Transaction extends Model
         'qty',
         'total_price',
         'status',
+        'paid_at',
+        'expired_at',
+    ];
+
+    protected $casts = [
+        'paid_at' => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     public function product()
@@ -26,6 +33,10 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
     
+
+
+
+
     public function canCancel()
     {
         return $this->status === 'pending';
@@ -40,4 +51,19 @@ class Transaction extends Model
     {
         return $this->status === 'awaiting_payment';
     }
+
+
+
+    
+
+    public function isExpired(): bool
+    {
+        return $this->expired_at && $this->expired_at->isPast();
+    }
+
+    public function canExpire(): bool
+    {
+        return in_array($this->status, ['pending', 'awaiting_payment']) && $this->isExpired();
+    }
+
 }

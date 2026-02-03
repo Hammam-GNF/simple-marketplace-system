@@ -11,9 +11,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::with(['user', 'product'])->where(function ($query) {
-            $query->whereNull('expired_at')->orWhere('expired_at', '>', now());
-        })->latest();
+        $query = Transaction::with(['user', 'product'])->whereNotIn('status', ['cancelled'])->latest()->paginate(10);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);

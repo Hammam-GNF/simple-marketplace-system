@@ -13,6 +13,9 @@
                 </div>
             @else
             @include('customer.transactions.partials.transactions-table')
+            <div class="mt-4">
+                {{ $transactions->withQueryString()->links() }}
+            </div>
             @endif
         </div>
     </div>
