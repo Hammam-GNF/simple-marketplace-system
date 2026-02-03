@@ -20,11 +20,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/transactions', [TransactionController::class, 'store']);
         Route::post('/transactions/{transaction}/pay', [TransactionController::class, 'pay']);
         Route::post('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel']);
+
+        Route::get('/transactions/{transaction}/invoice', [TransactionController::class, 'invoice']);
     });
 
     Route::middleware('api.role:admin')->prefix('admin')->group(function () {
         Route::get('/transactions', [AdminTransactionController::class, 'index']);
         Route::post('/transactions/{transaction}/confirm', [AdminTransactionController::class, 'confirm']);
+
+        Route::get('/transactions/{transaction}/invoice', [AdminTransactionController::class, 'invoice']);
     });
 
 });
