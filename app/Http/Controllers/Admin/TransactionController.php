@@ -8,10 +8,17 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Transaction::with(['user', 'product'])->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
         return view('admin.transactions.index', [
-            'transactions' => Transaction::with(['user', 'product'])->latest()->get(),
+            'transactions' => $query->paginate(10),
+            'currentStatus' => $request->status,
         ]);
     }
 
