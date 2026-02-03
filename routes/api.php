@@ -22,6 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel']);
     });
 
-    
+    Route::middleware('api.role:admin')->prefix('admin')->group(function () {
+        Route::get('/transactions', [AdminTransactionController::class, 'index']);
+        Route::post('/transactions/{transaction}/confirm', [AdminTransactionController::class, 'confirm']);
+    });
 
 });
