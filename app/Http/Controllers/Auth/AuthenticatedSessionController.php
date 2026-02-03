@@ -32,16 +32,7 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        if ($user->isCustomer()) {
-            return redirect()->route('customer.dashboard');
-        }
-
-        abort(403);
-
+        return redirect()->intended(route($user->dashboardRoute()));
     }
 
     /**

@@ -20,10 +20,13 @@ class RoleMiddleware
             abort(401);
         }
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         $userRole = Auth::user()->role?->name;
 
         if (!in_array($userRole, $roles)) {
-            abort(403, 'Unauthorized access');
+            return redirect($user->dashboardRoute());
         }
 
         return $next($request);

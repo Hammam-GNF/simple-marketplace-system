@@ -49,6 +49,23 @@ class User extends Authenticatable
         ];
     }
 
+
+
+
+
+    public function dashboardRoute(): string
+    {
+        return match ($this->role?->name) {
+            'admin' => route('admin.dashboard'),
+            'customer' => route('customer.dashboard'),
+            default => '/',
+        };
+    }
+
+
+
+
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
