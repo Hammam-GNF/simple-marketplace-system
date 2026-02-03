@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -53,6 +54,13 @@ class AdminTransactionController extends Controller
         Mail::to($transaction->user->email)->send(new TransactionPaidMail($transaction));
 
         return new TransactionResource($transaction->fresh());
+    }
+
+    public function invoice(Transaction $transaction, InvoiceService $invoiceService)
+    {
+        return $invoiceService
+            ->generate($transaction)
+            ->download("invoice-{$transaction->id}.pdf");
     }
 
     private function expireTransaction(Transaction $transaction)

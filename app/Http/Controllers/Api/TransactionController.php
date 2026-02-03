@@ -142,7 +142,9 @@ class TransactionController extends Controller
             ], 400);
         }
 
-        return $invoiceService->generate($transaction)->download("invoice-{$transaction->id}.pdf");
+        return $invoiceService
+            ->generate($transaction)
+            ->download("invoice-{$transaction->id}.pdf");
     }
 
     private function expireTransaction(Transaction $transaction)
