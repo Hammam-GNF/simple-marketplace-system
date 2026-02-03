@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +126,23 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Transaction cancelled'
         ]);
+    }
+
+    public function invoice(Transaction $transaction, InvoiceService $invoiceService)
+    {
+        if ($transaction->user_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        if ($transaction->status !== 'paid') {
+            return response()->json([
+                'message' => 'Invoice can only be generated for paid transactions.'
+            ], 400);
+        }
+
+        return $invoiceService->generate($transaction)->download("invoice-{$transaction->id}.pdf");
     }
 
     private function expireTransaction(Transaction $transaction)
