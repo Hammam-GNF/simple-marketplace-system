@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
 
     Route::get('/products', [CustomerProductController::class, 'index'])->name('products.index');
 
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 });
 

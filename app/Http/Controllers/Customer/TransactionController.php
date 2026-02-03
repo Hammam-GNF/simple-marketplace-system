@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    public function index() {
+        $transactions = Transaction::with('product')->where('user_id', Auth::user()->id)->latest()->get();
+        return view('customer.transactions.index', compact('transactions'));
+    }
+
     public function store(Request $request) 
     {
         $request->validate([

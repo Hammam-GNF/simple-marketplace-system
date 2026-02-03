@@ -63,10 +63,26 @@
                             <x-nav-link :href="route('customer.dashboard')" :active="request()->routeIs('customer.dashboard')">
                                 {{ __('Dashboard') }}
                             </x-nav-link>
-
+                            
+                            <x-nav-link :href="route('customer.transactions.index')" :active="request()->routeIs('customer.transactions.index')">
+                                {{ __('My Orders') }}
+                            </x-nav-link>
+                            
                             <x-nav-link :href="route('customer.products.index')" :active="request()->routeIs('customer.products.index')">
                                 {{ __('Products') }}
                             </x-nav-link>
+
+                            <a
+                                href="{{ route('customer.products.index') }}"
+                                class="inline-flex items-center px-1 pt-1 border-b-2
+                                    {{ request()->routeIs('customer.products.index')
+                                            ? 'border-indigo-400 text-gray-900'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }}
+                                    text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out"
+                            >
+                                Products
+                            </a>
                         @endif
                     @endauth
                 </div>
