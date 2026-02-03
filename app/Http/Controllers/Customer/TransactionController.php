@@ -72,6 +72,12 @@ class TransactionController extends Controller
             ]);
         }
 
+        if ($transaction->isExpired()) {
+            return back()->withErrors([
+                'status' => 'Transaction is expired.'
+            ]);
+        }
+
         DB::transaction(function () use ($transaction) {
             $transaction->update([
                 'status' => 'awaiting_payment',
