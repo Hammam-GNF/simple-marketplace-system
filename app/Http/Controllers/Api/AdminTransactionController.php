@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
+use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AdminTransactionController extends Controller
 {
@@ -47,6 +49,8 @@ class AdminTransactionController extends Controller
             ]);
 
         });
+
+        Mail::to($transaction->user->email)->send(new TransactionPaidMail($transaction));
 
         return new TransactionResource($transaction->fresh());
     }
