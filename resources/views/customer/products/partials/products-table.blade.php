@@ -22,25 +22,33 @@
                 <td class="px-4 py-3 text-right">{{ $product->stock }}</td>
                 <td class="px-4 py-3 text-right space-x-2">
 
-                    <!-- Edit -->
-                    <x-secondary-button
-                        x-data
-                        x-on:click.prevent="$dispatch('open-modal', 'edit-product-{{ $product->id }}')"
-                    >
-                        Edit
-                    </x-secondary-button>
+                    @if ($product->stock > 0)
+                        <form
+                            method="POST"
+                            action="{{ route('customer.transactions.store') }}"
+                            class="inline-flex items-center space-x-2"
+                        >
+                            @csrf
 
-                    <!-- Delete -->
-                    <x-danger-button
-                        x-data
-                        x-on:click.prevent="$dispatch('open-modal', 'delete-product-{{ $product->id }}')"
-                    >
-                        Delete
-                    </x-danger-button>
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                    {{-- MODALS --}}
-                    @include('admin.products.partials.update-product-form', ['product' => $product])
-                    @include('admin.products.partials.delete-product-form', ['product' => $product])
+                            <input
+                                type="number"
+                                name="qty"
+                                min="1"
+                                max="{{ $product->stock }}"
+                                value="1"
+                                class="w-16 rounded border-gray-300 text-sm"
+                                required
+                            >
+
+                            <x-primary-button>
+                                Buy
+                            </x-primary-button>
+                        </form>
+                    @else
+                        <span class="text-sm text-red-500">Out of stock</span>
+                    @endif
                 </td>
             </tr>
         @endforeach

@@ -6,16 +6,8 @@
     </x-slot>
 
     <div class="py-12 space-y-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-        {{-- Create --}}
-        {{-- <div class="p-6 bg-white shadow sm:rounded-lg">
-            @include('customer.products.partials.create-category-form')
-        </div> --}}
-
-        {{-- Table --}}
         <div class="p-6 bg-white shadow sm:rounded-lg">
             @include('customer.products.partials.products-table')
         </div>
-
     </div>
 </x-app-layout>
