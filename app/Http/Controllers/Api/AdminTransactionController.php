@@ -43,10 +43,10 @@ class AdminTransactionController extends Controller
             ], 422);
         }
 
-        $config = config('mail.mailers.smpt_live');
+        $config = config('mail.mailers.smtp_live');
 
         if (!$config['host'] || !$config['username']) {
-            config(['mail.mailers.smpt_live' => [
+            config(['mail.mailers.smtp_live' => [
                 'transport' => 'smtp',
                 'host' => 'sandbox.smtp.mailtrap.io',
                 'port' => 587,

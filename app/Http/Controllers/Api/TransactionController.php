@@ -119,7 +119,7 @@ class TransactionController extends Controller
             $transaction->product->increment('stock', $transaction->qty);
 
             $transaction->update([
-                'status' => 'canceled',
+                'status' => 'cancelled',
             ]);
         });
 
