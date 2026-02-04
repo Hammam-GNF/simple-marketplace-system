@@ -62,21 +62,26 @@
                     {{ optional($transaction->paid_at)->format('d M Y H:i') ?? '—' }}
                 </td>
 
-                <td class="px-4 py-3 text-right">
+                <td class="px-4 py-3 text-right space-x-2">
+
+                    <a href="{{ route('admin.transactions.show', $transaction) }}"
+                        class="text-indigo-600 hover:underline text-sm">
+                            View
+                    </a>
+
                     @if ($transaction->canConfirm())
                         <x-primary-button
                             x-data
                             x-on:click.prevent="$dispatch('open-modal', 'confirm-transaction-{{ $transaction->id }}')"
                         >
-                            Confirm Payment
+                            Confirm
                         </x-primary-button>
 
                         @include('admin.transactions.partials.confirm-transaction-modal', [
                             'transaction' => $transaction
                         ])
-                    @else
-                        —
                     @endif
+
                 </td>
 
             </tr>

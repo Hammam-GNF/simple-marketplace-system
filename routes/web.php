@@ -55,6 +55,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
     Route::put('/transactions/{transaction}', [AdminTransactionController::class, 'update'])->name('transactions.update');
+    Route::get('/transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
+    Route::get('/transactions/{transaction}/invoice', [AdminTransactionController::class, 'invoice'])->name('transactions.invoice');
 });
 
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
@@ -68,6 +70,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::patch('/transactions/{transaction}/pay', [TransactionController::class, 'pay'])->name('transactions.pay');
     Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::get('/transactions/{transaction}/invoice', [TransactionController::class, 'invoice'])->name('transaction.invoice');
 });
 
 require __DIR__.'/auth.php';

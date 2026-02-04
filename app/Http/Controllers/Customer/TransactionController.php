@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +61,16 @@ class TransactionController extends Controller
             ->with('success', 'Transaction created successfully.');
     }
 
+    public function show(Transaction $transaction)
+    {
+        if ($transaction->user_id !== Auth::id()) {
+            abort(403);
+        }
+        return view('customer.transactions.show', [
+            'transaction' => $transaction->load(['product']),
+        ]);
+    }
+
     public function pay(Transaction $transaction)
     {
         if ($transaction->user_id !== Auth::id()) {
@@ -109,5 +120,12 @@ class TransactionController extends Controller
         });
 
         return back()->with('success', 'Transaction cancelled.');
+    }
+
+    public function invoice(Transaction $transaction, InvoiceService $invoiceService)
+    {
+        return $invoiceService
+            ->generate($transaction)
+            ->download("invoice-{$transaction->id}.pdf");
     }
 }

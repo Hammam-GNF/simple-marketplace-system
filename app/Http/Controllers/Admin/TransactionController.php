@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -22,6 +23,13 @@ class TransactionController extends Controller
         return view('admin.transactions.index', [
             'transactions' => $query->paginate(10),
             'currentStatus' => $request->status,
+        ]);
+    }
+
+    public function show(Transaction $transaction)
+    {
+        return view('admin.transactions.show', [
+            'transaction' => $transaction->load(['user', 'product']),
         ]);
     }
 
@@ -43,5 +51,12 @@ class TransactionController extends Controller
         Mail::to($transaction->user->email)->send(new TransactionPaidMail($transaction));
 
         return back()->with('success', 'Transaction status updated.');
+    }
+
+    public function invoice(Transaction $transaction, InvoiceService $invoiceService)
+    {
+        return $invoiceService
+            ->generate($transaction)
+            ->download("invoice-{$transaction->id}.pdf");
     }
 }

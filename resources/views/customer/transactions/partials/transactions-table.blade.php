@@ -57,7 +57,13 @@
                     {{ optional($transaction->expired_at)->format('d M Y H:i') ?? '—' }}
                 </td>
 
-                <td class="px-4 py-3 text-right">
+                <td class="px-4 py-3 text-right space-x-2">
+
+                    <a href="{{ route('customer.transactions.show', $transaction) }}"
+                    class="text-indigo-600 hover:underline text-sm">
+                        View
+                    </a>
+
                     @if ($transaction->canCancel())
                         <x-danger-button
                             x-data
@@ -69,8 +75,6 @@
                         @include('customer.transactions.partials.cancel-transaction-modal', [
                             'transaction' => $transaction
                         ])
-                    @else
-                        —
                     @endif
 
                     @if ($transaction->canPay())
@@ -84,9 +88,8 @@
                         @include('customer.transactions.partials.pay-transaction-modal', [
                             'transaction' => $transaction
                         ])
-                    @else
-                        —
                     @endif
+
                 </td>
 
             </tr>
