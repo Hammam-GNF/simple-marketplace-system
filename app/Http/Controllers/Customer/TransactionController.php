@@ -121,11 +121,4 @@ class TransactionController extends Controller
 
         return back()->with('success', 'Transaction cancelled.');
     }
-
-    public function invoice(Transaction $transaction, InvoiceService $invoiceService)
-    {
-        return $invoiceService
-            ->generate($transaction)
-            ->download("invoice-{$transaction->id}.pdf");
-    }
 }

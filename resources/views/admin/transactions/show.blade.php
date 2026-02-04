@@ -89,6 +89,13 @@
                 </form>
             @endif
 
+            @if ($transaction->status === 'paid')
+                <a href="{{ route('admin.transactions.invoice', $transaction) }}"
+                class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded">
+                    Download Invoice
+                </a>
+            @endif
+
         </div>
 
     </div>

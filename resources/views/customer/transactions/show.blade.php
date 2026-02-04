@@ -94,10 +94,16 @@
                     @csrf
                     @method('PATCH')
 
-                    <x-secondary-button>
+                    <x-secondary-button type="submit">
                         Pay Now
                     </x-secondary-button>
                 </form>
+            @endif
+
+            @if ($transaction->status === 'paid')
+                <p class="text-sm text-gray-500">
+                    Invoice will be sent by admin after payment confirmation.
+                </p>
             @endif
 
         </div>

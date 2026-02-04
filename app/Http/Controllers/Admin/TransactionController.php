@@ -55,6 +55,10 @@ class TransactionController extends Controller
 
     public function invoice(Transaction $transaction, InvoiceService $invoiceService)
     {
+        if ($transaction->status !== 'paid') {
+            abort(403, 'Invoice only available for paid transactions.');
+        }
+        
         return $invoiceService
             ->generate($transaction)
             ->download("invoice-{$transaction->id}.pdf");

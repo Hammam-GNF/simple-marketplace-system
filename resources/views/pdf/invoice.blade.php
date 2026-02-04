@@ -138,9 +138,10 @@
 
     <tr>
         <td>Status</td>
-        <td class="text-right status-paid">
+        <td class="text-right {{ $transaction->status === 'paid' ? 'status-paid' : '' }}">
             {{ strtoupper($transaction->status) }}
         </td>
+
     </tr>
 
     @if($transaction->paid_at)

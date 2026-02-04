@@ -45,7 +45,10 @@
                             bg-gray-100 text-gray-600
                         @endif
                     ">
-                        {{ ucfirst($transaction->status) }}
+                        {{ $transaction->status === 'awaiting_payment'
+                            ? 'Waiting Confirmation'
+                            : ucfirst($transaction->status)
+                        }}
                     </span>
                 </td>
 
@@ -88,6 +91,12 @@
                         @include('customer.transactions.partials.pay-transaction-modal', [
                             'transaction' => $transaction
                         ])
+                    @endif
+
+                    @if ($transaction->status === 'awaiting_payment')
+                        <div class="text-sm text-blue-600 bg-blue-50 px-4 py-2 rounded">
+                            Payment submitted. Waiting for admin confirmation.
+                        </div>
                     @endif
 
                 </td>
