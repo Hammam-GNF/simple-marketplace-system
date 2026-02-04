@@ -153,6 +153,24 @@
                 <x-responsive-nav-link :href="route('admin.products.index')">
                     Products
                 </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.transactions.index')">
+                    Transactions
+                </x-responsive-nav-link>
+            @endif
+
+            @if (Auth::user()->isCustomer())
+                <x-responsive-nav-link :href="route('customer.dashboard')">
+                    Dashboard
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('customer.transactions.index')">
+                    My Orders
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('customer.products.index')">
+                    Products
+                </x-responsive-nav-link>
             @endif
         </div>
 
