@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
+use App\Mail\TransactionCancelledMail;
 use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
 use App\Services\InvoiceService;
@@ -29,7 +30,7 @@ class AdminTransactionController extends Controller
     public function confirm(Transaction $transaction)
     {
         if ($transaction->canExpire()) {
-            $this->expireTransaction($transaction);
+            $this->expireTransaction($transaction, 'smtp_live');
 
             return response()->json([
                 'message' => 'Transaction already expired'
@@ -42,19 +43,35 @@ class AdminTransactionController extends Controller
             ], 422);
         }
 
-        DB::transaction(function () use ($transaction) {
+        $config = config('mail.mailers.smpt_live');
 
+        if (!$config['host'] || !$config['username']) {
+            config(['mail.mailers.smpt_live' => [
+                'transport' => 'smtp',
+                'host' => 'sandbox.smtp.mailtrap.io',
+                'port' => 587,
+                'username' => 'c2026ea45c672f',
+                'password' => '75351380a09db0',
+                'encryption' => 'tls',
+            ]]);
+        }
+
+        $contextMailer = 'smtp_live';
+
+        DB::transaction(function () use ($transaction, $contextMailer) {
             $transaction->update([
                 'status' => 'paid',
                 'paid_at' => now(),
             ]);
 
+            Mail::mailer($contextMailer)
+                ->to($transaction->user->email)
+                ->send(new TransactionPaidMail($transaction));
         });
-
-        Mail::to($transaction->user->email)->send(new TransactionPaidMail($transaction));
 
         return new TransactionResource($transaction->fresh());
     }
+
 
     public function invoice(Transaction $transaction, InvoiceService $invoiceService)
     {
@@ -67,17 +84,20 @@ class AdminTransactionController extends Controller
             ->download("invoice-{$transaction->id}.pdf");
     }
 
-    private function expireTransaction(Transaction $transaction)
+    private function expireTransaction(Transaction $transaction, string $mailer)
     {
-        DB::transaction(function () use ($transaction) {
-
+        DB::transaction(function () use ($transaction, $mailer) {
             $transaction->product->increment('stock', $transaction->qty);
 
             $transaction->update([
                 'status' => 'expired',
             ]);
 
+            Mail::mailer($mailer)
+                ->to($transaction->user->email)
+                ->send(new TransactionCancelledMail($transaction));
         });
     }
+
 
 }

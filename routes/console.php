@@ -1,9 +1,11 @@
 <?php
 
+use App\Mail\TransactionCancelledMail;
 use App\Models\Transaction;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -24,6 +26,10 @@ Schedule::call(function () {
                     $transaction->update([
                         'status' => 'cancelled',
                     ]);
+
+                    Mail::mailer('smtp_sandbox')
+                        ->to($transaction->user->email)
+                        ->send(new TransactionCancelledMail($transaction));
                 });
             }
         });
