@@ -150,7 +150,7 @@ API documentation is provided via **Postman collection**.
 
 ---
 
-## 10. Installation
+ ## 10.Installation
 
 ### Requirements
 - PHP >= 8.3
@@ -175,23 +175,22 @@ npm run build
 
 php artisan serve
 
-
 ---
 
-## 11. Default Seeder Accounts
+ ## 11. Default Seeder Accounts
 
 The following accounts are automatically created using database seeders for testing purposes:
 
 | Role     | Email               | Password |
 |----------|---------------------|----------|
-| Admin    | admin@example.com   | password |
-| Customer | customer@example.com| password |
+| Admin    | admin@marketing.com   | 123456789 |
+| Customer | customer@marketing.com| 123456789 |
 
 > You may modify these credentials directly in the seeder files if needed.
 
 ---
 
-## 12. Access Control & Security
+ ## 12. Access Control & Security
 
 - Role-based access control is enforced using middleware
 - Admin and Customer have strictly separated routes and permissions
@@ -200,7 +199,7 @@ The following accounts are automatically created using database seeders for test
 
 ---
 
-## 13. Guard & Negative Test Scenarios
+ ## 13. Guard & Negative Test Scenarios
 
 The system includes guard checks to prevent invalid actions, such as:
 
@@ -213,7 +212,7 @@ These checks ensure transaction integrity and system consistency.
 
 ---
 
-## 14. API Documentation
+ ## 14. API Documentation
 
 - REST API endpoints are available for:
   - Products
@@ -223,7 +222,7 @@ These checks ensure transaction integrity and system consistency.
 
 ---
 
-## 15. Project Scope & Limitations
+ ## 15. Project Scope & Limitations
 
 - Payment gateway integration is **intentionally excluded**
 - Manual payment confirmation is used to focus on:
@@ -234,7 +233,7 @@ These checks ensure transaction integrity and system consistency.
 
 ---
 
-## 16. Project Status
+ ## 16. Project Status
 
 - Core features: ✅ Completed
 - Optional enhancements (SSO, external payment gateway): ❌ Not implemented
