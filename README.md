@@ -76,7 +76,6 @@ The system supports two roles:
 - Create transactions
 - Submit payment confirmation
 - View transaction history
-- Download invoice (PDF)
 
 ---
 
