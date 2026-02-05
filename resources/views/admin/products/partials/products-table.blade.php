@@ -22,25 +22,25 @@
                     <td class="px-4 py-3">{{ $product->category->name }}</td>
                     <td class="px-4 py-3 text-right">{{ $product->getFormattedPriceAttribute() }}</td>
                     <td class="px-4 py-3 text-right">{{ $product->stock }}</td>
-                    <td class="px-4 py-3 text-right space-x-2">
+                    <td class="px-4 py-3">
+                        <div class="flex justify-end items-center gap-2">
 
-                        <!-- Edit -->
-                        <x-secondary-button
-                            x-data
-                            x-on:click.prevent="$dispatch('open-modal', 'edit-product-{{ $product->id }}')"
-                        >
-                            Edit
-                        </x-secondary-button>
+                            <x-secondary-button
+                                x-data
+                                x-on:click.prevent="$dispatch('open-modal', 'edit-product-{{ $product->id }}')"
+                            >
+                                Edit
+                            </x-secondary-button>
 
-                        <!-- Delete -->
-                        <x-danger-button
-                            x-data
-                            x-on:click.prevent="$dispatch('open-modal', 'delete-product-{{ $product->id }}')"
-                        >
-                            Delete
-                        </x-danger-button>
+                            <x-danger-button
+                                x-data
+                                x-on:click.prevent="$dispatch('open-modal', 'delete-product-{{ $product->id }}')"
+                            >
+                                Delete
+                            </x-danger-button>
 
-                        {{-- MODALS --}}
+                        </div>
+
                         @include('admin.products.partials.update-product-form', ['product' => $product])
                         @include('admin.products.partials.delete-product-form', ['product' => $product])
                     </td>
