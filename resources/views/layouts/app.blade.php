@@ -29,27 +29,28 @@
 
             <!-- Page Content -->
             <main>
-                @if (session('success'))
-                    <div class="mb-4">
-                        <x-auth-session-status
-                            :status="session('success')"
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-3">
+                    @if (session('success'))
+                        <x-alert
+                            type="success"
+                            :message="session('success')"
                         />
-                    </div>
-                @endif
+                    @endif
 
-                @if ($errors->any())
-                    <div class="mb-4">
-                        <div class="rounded-md bg-red-50 p-4">
-                            <div class="text-sm text-red-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                    @if (session('error'))
+                        <x-alert
+                            type="error"
+                            :message="session('error')"
+                        />
+                    @endif
+
+                    @if ($errors->any())
+                        <x-alert
+                            type="error"
+                            :message="$errors->first()"
+                        />
+                    @endif
+                </div>
                 {{ $slot }}
             </main>
         </div>

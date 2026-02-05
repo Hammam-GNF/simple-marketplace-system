@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        return redirect(($user->dashboardRoute()));
+        return redirect(($user->dashboardRoute()))->with('success', 'Login Successful');
     }
 
     /**
