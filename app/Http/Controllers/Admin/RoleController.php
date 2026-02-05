@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -15,13 +16,10 @@ class RoleController extends Controller
         ]);
     }
     
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:roles,name',
             'description' => 'nullable|string',
         ]);
 
@@ -31,13 +29,15 @@ class RoleController extends Controller
             ->with('success', 'Role created successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Role $role)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')->ignore($role->id),
+            ],
             'description' => 'nullable|string',
         ]);
 
@@ -47,10 +47,6 @@ class RoleController extends Controller
             ->with('success', 'Role updated successfully.');
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Role $role)
     {
         $role->delete();

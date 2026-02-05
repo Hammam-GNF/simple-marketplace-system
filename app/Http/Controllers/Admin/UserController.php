@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -51,7 +52,7 @@ class UserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:users,email,' . $user->id,
+                Rule::unique('users', 'email')->ignore($user->id),
             ],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'role_id' => ['required', 'exists:roles,id'],
@@ -76,7 +77,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Optional safety: prevent deleting self
         if (Auth::user() === $user->id) {
             return back()->with('error', 'You cannot delete your own account.');
         }
