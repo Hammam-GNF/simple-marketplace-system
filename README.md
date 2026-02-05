@@ -174,7 +174,7 @@ npm install
 npm run build
 
 php artisan serve
-
+```
 ---
 
  ## 11. Default Seeder Accounts
