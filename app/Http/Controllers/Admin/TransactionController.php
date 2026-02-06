@@ -38,7 +38,7 @@ class TransactionController extends Controller
     {
         if (!$transaction->canConfirm()) {
             return back()->withErrors([
-                'status' => 'Transaction is not ready for confirmation.'
+                'status' => 'Only awaiting payment transactions can be confirmed.'
             ]);
         }
 

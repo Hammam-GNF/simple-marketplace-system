@@ -39,7 +39,7 @@ class AdminTransactionController extends Controller
 
         if (!$transaction->canConfirm()) {
             return response()->json([
-                'message' => 'Transaction is not ready for confirmation.'
+                'message' => 'Only awaiting payment transactions can be confirmed.'
             ], 422);
         }
 
