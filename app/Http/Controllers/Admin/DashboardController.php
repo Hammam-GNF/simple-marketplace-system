@@ -12,16 +12,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard', [
-            'stats' => [
-                'users' => User::count(),
-                'products' => Product::count(),
-                'pendingTransactions' => Transaction::where('status', 'pending')->count(),
-                'totalTransactions' => Transaction::count(),
-            ],
-            'transactions' => Transaction::with('user')
-                ->latest()
-                ->paginate(5),
-        ]);
+        $stats = [
+            'users' => User::count(),
+            'products' => Product::count(),
+            'pending' => Transaction::whereIn('status', ['pending', 'awaiting_payment'])->count(),
+            'paid' => Transaction::where('status', 'paid')->count(),
+            'cancelled' => Transaction::where('status', 'cancelled')->count(),
+            'total' => Transaction::count(),
+        ];
+
+        $transactions = Transaction::with(['user', 'product'])
+            ->latest()
+            ->paginate(5);
+
+        return view('admin.dashboard', compact('stats', 'transactions'));
     }
 }

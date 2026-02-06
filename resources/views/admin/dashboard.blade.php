@@ -21,12 +21,12 @@
 
                 <div class="bg-white p-6 rounded-lg shadow">
                     <p class="text-sm text-gray-500">Pending Transactions</p>
-                    <p class="text-2xl font-bold">{{ $stats['pendingTransactions'] }}</p>
+                    <p class="text-2xl font-bold">{{ $stats['pending'] }}</p>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow">
                     <p class="text-sm text-gray-500">Total Transactions</p>
-                    <p class="text-2xl font-bold">{{ $stats['totalTransactions'] }}</p>
+                    <p class="text-2xl font-bold">{{ $stats['total'] }}</p>
                 </div>
             </div>
 
