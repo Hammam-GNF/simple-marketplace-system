@@ -200,7 +200,9 @@ The documentation is generated directly from a **published Postman collection**,
 
   * Confirmed as **paid**
   * Marked as **expired**
-* SMTP service used: **Mailtrap**
+* SMTP service used: **Brevo (SMTP)**
+* Emails are sent when a transaction is confirmed as paid or marked as expired
+* Invoice PDF is generated on-the-fly and attached to email (not saved on server)
 
 ---
 
