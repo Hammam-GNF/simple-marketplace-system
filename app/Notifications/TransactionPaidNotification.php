@@ -43,11 +43,13 @@ class TransactionPaidNotification extends Notification
             ->subject('Payment Confirmed')
             ->greeting('Hello ' . $notifiable->name)
             ->line('Your payment has been confirmed.')
+            ->line('Invoice is attached.')
             ->attachData(
                 $pdf->output(),
                 "invoice-{$this->transaction->id}.pdf",
                 ['mime' => 'application/pdf']
             );
+
     }
 
     /**

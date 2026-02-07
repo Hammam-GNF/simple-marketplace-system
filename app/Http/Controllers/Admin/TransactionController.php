@@ -56,6 +56,7 @@ class TransactionController extends Controller
             TransactionPaid::dispatch($transaction);
         });
 
+
         return back()->with('success', 'Transaction status updated.');
     }
 
