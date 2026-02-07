@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Transaction extends Model
 {
+    use HasEvents;
+
     protected $table = 'transactions';
 
     protected $fillable = [

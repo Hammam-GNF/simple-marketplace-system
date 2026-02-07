@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\TransactionExpired;
+use App\Events\TransactionPaid;
 use App\Http\Controllers\Controller;
-use App\Mail\TransactionCancelledMail;
-use App\Mail\TransactionPaidMail;
 use App\Models\Transaction;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class TransactionController extends Controller
 {
@@ -42,32 +41,20 @@ class TransactionController extends Controller
             ]);
         }
 
-        $config = config('mail.mailers.smtp_sandbox');
+        if ($transaction->canExpire()) {
+            $this->expireTransaction($transaction);
 
-        if (!$config['host'] || !$config['username']) {
-            config(['mail.mailers.smtp_sandbox' => [
-                'transport' => 'smtp',
-                'host' => 'sandbox.smtp.mailtrap.io',
-                'port' => 2525,
-                'username' => 'c2026ea45c672f',
-                'password' => '75351380a09db0',
-                'encryption' => 'tls',
-            ]]);
+            return back()->with('success', 'Transaction already expired');
         }
 
-        $contextMailer = 'smtp_sandbox';
-
-        DB::transaction(function () use ($transaction, $contextMailer) {
+        DB::transaction(function () use ($transaction) {
             $transaction->update([
                 'status' => 'paid',
                 'paid_at' => now(),
             ]);
 
-            Mail::mailer($contextMailer)
-                ->to($transaction->user->email)
-                ->send(new TransactionPaidMail($transaction));
+            TransactionPaid::dispatch($transaction);
         });
-
 
         return back()->with('success', 'Transaction status updated.');
     }
@@ -85,18 +72,14 @@ class TransactionController extends Controller
 
     private function expireTransaction(Transaction $transaction)
     {
-        $contextMailer = 'smtp_sandbox';
-
-        DB::transaction(function () use ($transaction, $contextMailer) {
+        DB::transaction(function () use ($transaction) {
             $transaction->product->increment('stock', $transaction->qty);
 
             $transaction->update([
                 'status' => 'expired',
             ]);
 
-            Mail::mailer($contextMailer)
-                ->to($transaction->user->email)
-                ->send(new TransactionCancelledMail($transaction));
+            TransactionExpired::dispatch($transaction);
         });
     }
 }
