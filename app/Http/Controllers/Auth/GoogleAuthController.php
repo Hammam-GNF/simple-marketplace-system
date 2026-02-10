@@ -24,6 +24,10 @@ class GoogleAuthController extends Controller
         $user = User::where('email', $googleUser->getEmail())->first();
 
         if ($user) {
+            if ($user->provider && $user->provider !== 'google') {
+                abort(403, 'This email is already registered with another login method.');
+            }
+
             $user->update([
                 'provider' => 'google',
                 'provider_id' => $googleUser->getId(),
@@ -32,7 +36,7 @@ class GoogleAuthController extends Controller
             $user = User::create([
                 'name' => $googleUser->getName() ?? $googleUser->getNickname(),
                 'email' => $googleUser->getEmail(),
-                'password' => bcrypt(str()->random(16)),
+                'password' => bcrypt(str()->random(32)),
                 'provider' => 'google',
                 'provider_id' => $googleUser->getId(),
                 'role_id' => Role::where('name', 'customer')->first()->id,

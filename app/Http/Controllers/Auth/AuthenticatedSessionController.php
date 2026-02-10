@@ -25,6 +25,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->provider === 'google') {
+            return back()->withErrors([
+                'email' => 'This account uses Google Sign-In. Please continue with Google.',
+            ]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -32,7 +40,8 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        return redirect(($user->dashboardRoute()))->with('success', 'Login Successful');
+        return redirect(($user->dashboardRoute()))
+            ->with('success', 'Login Successful');
     }
 
     /**
