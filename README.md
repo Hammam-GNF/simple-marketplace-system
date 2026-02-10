@@ -7,29 +7,32 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Laravel-12-red" alt="Laravel 12">
   <img src="https://img.shields.io/badge/PHP-8.3-blue" alt="PHP 8.3">
+  <img src="https://img.shields.io/badge/Auth-Google%20SSO%20%2B%20Email-success" alt="Auth">
   <img src="https://img.shields.io/badge/Status-Completed-success" alt="Project Status">
   <img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="License">
 </p>
 
 # Simple Marketplace System
 
-A **simple marketplace system** built with **Laravel 12**, focusing on clean architecture, role-based access control, and a clear transaction flow.
-This project is intended for **technical assessment and portfolio purposes**.
+A **simple marketplace system** built with **Laravel 12**, designed to demonstrate **clean architecture**, **strict role separation**, and a **well-defined transaction state machine**.
+
+This project is built as a **technical assessment & portfolio project**, with emphasis on backend correctness, access control, and real-world constraints rather than feature quantity.
 
 ---
 
-## 1. Objective
+## 1. Project Goals
 
-The goal of this project is to build a simple marketplace application that includes:
+This project focuses on implementing a realistic marketplace flow with clear boundaries:
 
-* Product listing with category grouping
-* User authentication and role-based access
-* Transaction management with manual payment confirmation
-* RESTful API endpoints
-* Responsive and clean UI
+* Role-based authentication (Admin & Customer)
+* Product and category management
+* Transaction lifecycle with state enforcement
+* Manual payment confirmation workflow
+* RESTful API with token-based authentication
 * PDF invoice generation and email notification
+* Google OAuth login with explicit security rules
 
-The project is published in a public GitHub repository following good development practices.
+The repository follows structured commits, clear separation of concerns, and defensive authorization logic.
 
 ---
 
@@ -39,8 +42,9 @@ The project is published in a public GitHub repository following good developmen
 
 * Laravel 12
 * PHP 8.3
-* Laravel Breeze (authentication)
+* Laravel Breeze (session-based auth)
 * Laravel Sanctum (API authentication)
+* Laravel Socialite (Google OAuth)
 
 ### Frontend
 
@@ -52,21 +56,39 @@ The project is published in a public GitHub repository following good developmen
 
 * MySQL / SQLite (configurable)
 
-### External Packages
+### Key Packages
 
 | Package                 | Purpose                    |
 | ----------------------- | -------------------------- |
 | laravel/breeze          | Authentication scaffolding |
 | laravel/sanctum         | API authentication         |
+| laravel/socialite       | Google OAuth               |
 | barryvdh/laravel-dompdf | PDF invoice generation     |
-| fakerphp/faker          | Database seeding           |
 | laravel/pint            | Code formatting            |
 
 ---
 
-## 3. User Roles
+## 3. Authentication Design
 
-The system supports two roles:
+### Supported Methods
+
+* Email & password (Breeze)
+* Google OAuth 2.0 (Socialite)
+
+### Hard Rules (Intentional Design)
+
+* **Google SSO is customer-only**
+* Users with `provider = google` **cannot log in using email/password**
+* Email/password login is reserved for non-Google users
+* Multi-provider OAuth is intentionally **not supported**
+
+If a Google-registered user attempts to log in via the email/password form, the system blocks the attempt and instructs them to continue with Google.
+
+This prevents account takeover scenarios and enforces a single authentication source of truth.
+
+---
+
+## 4. User Roles
 
 ### Admin
 
@@ -74,7 +96,7 @@ The system supports two roles:
 * Manage categories and products
 * View and manage all transactions
 * Confirm customer payments
-* Export invoices (PDF)
+* Download invoice PDFs
 
 ### Customer
 
@@ -83,28 +105,13 @@ The system supports two roles:
 * Submit payment confirmation
 * View transaction history
 
----
-
-## 4. Database Structure
-
-Main tables:
-
-* users
-* roles
-* categories
-* products
-* transactions
-
-Seeders are provided for:
-
-* Users
-* Roles
+Admin and Customer routes are strictly separated using middleware and role guards.
 
 ---
 
-## 5. Transaction Flow
+## 5. Transaction Lifecycle
 
-Transactions follow a clear state-based flow:
+Transactions follow a strict state machine:
 
 1. `pending`
 2. `awaiting_payment`
@@ -114,69 +121,46 @@ Transactions follow a clear state-based flow:
 
 ### Payment Handling
 
-* Payment is **manual**
+* Payments are **manual by design**
 * Customer submits payment confirmation
 * Admin verifies and confirms payment
-* Email notification is sent when payment is confirmed
+* Email notification is sent upon confirmation or expiration
+
+This design intentionally excludes payment gateways to focus on:
+
+* State validation
+* Authorization rules
+* Admin verification workflow
 
 ---
 
-## 6. RESTful API Overview
-
-The application exposes a RESTful API designed for clear separation of concerns and role-based access.
-
-### API Authentication
-
-* API authentication is handled using **Laravel Sanctum**
-* All protected endpoints require a valid **Bearer Token**
-
-### API Consumers
-
-* Customer-facing applications (mobile / frontend)
-* Admin tools or internal services
-
----
-
-## 7. API Documentation (Postman)
-
-Complete and up-to-date API documentation is available via **Postman Documenter**.
-
-🔗 **API Documentation (Public):**
-[https://documenter.getpostman.com/view/40291601/2sBXc8oiR3](https://documenter.getpostman.com/view/40291601/2sBXc8oiR3)
-
-### What the documentation includes:
-
-* Authentication endpoints
-* Example requests (curl & JSON body)
-* Example success responses
-* Example error responses (401 / 403 / 422)
-* Pagination format
-* Role-based access rules
-
-The documentation is generated directly from a **published Postman collection**, ensuring accuracy with the implemented API behavior.
-
----
-
-## 8. Available API Resources
+## 6. RESTful API
 
 ### Authentication
+
+* API authentication uses **Laravel Sanctum**
+* All protected endpoints require a valid **Bearer Token**
+
+### Available Resources
+
+**Authentication**
 
 * Login
 * Logout
 
-### Products
+**Products**
 
 * List products (paginated)
 * View product details
 
-### Transactions (Customer)
+**Transactions (Customer)**
 
 * List own transactions
 * Create transaction
 * Pay transaction
 * Cancel transaction
 
-### Transactions (Admin)
+**Transactions (Admin)**
 
 * List all transactions
 * Filter by status
@@ -186,38 +170,49 @@ The documentation is generated directly from a **published Postman collection**,
 
 ---
 
-## 9. PDF & Reporting
+## 7. API Documentation
 
-* Invoice PDF generation for paid transactions
-* Implemented using `barryvdh/laravel-dompdf`
-* Invoice access is restricted to **paid** transactions only
+Complete API documentation is published via Postman:
+
+🔗 [https://documenter.getpostman.com/view/40291601/2sBXc8oiR3](https://documenter.getpostman.com/view/40291601/2sBXc8oiR3)
+
+Includes:
+
+* Example requests & responses
+* Error scenarios (401 / 403 / 422)
+* Pagination format
+* Role-based access rules
 
 ---
 
-## 10. Email Notification
+## 8. PDF & Email System
 
-* Email notification is sent when a transaction is:
+* Invoice PDFs are generated for **paid transactions only**
+* Implemented using `laravel-dompdf`
+* PDFs are generated on-demand and **not stored on disk**
+
+### Email Notifications
+
+* Sent when a transaction is:
 
   * Confirmed as **paid**
   * Marked as **expired**
-* SMTP service used: **Brevo (SMTP)**
-* Emails are sent when a transaction is confirmed as paid or marked as expired
-* Invoice PDF is generated on-the-fly and attached to email (not saved on server)
+* SMTP provider: **Brevo**
+* Invoice PDF is attached to the email
 
 ---
 
-## 11. UI / UX
+## 9. UI / UX Overview
 
 * Public landing page
 * Admin dashboard
 * Customer dashboard
-* Responsive design for desktop and mobile
-* Responsive tables with horizontal overflow handling
-* Clean and minimal navigation
+* Responsive layout (desktop & mobile)
+* Clean navigation and guarded routes
 
 ---
 
-## 12. Installation
+## 10. Installation
 
 ### Requirements
 
@@ -226,7 +221,7 @@ The documentation is generated directly from a **published Postman collection**,
 * Node.js & npm
 * MySQL or SQLite
 
-### Steps
+### Setup
 
 ```bash
 git clone https://github.com/your-username/simple-marketplace-system.git
@@ -246,63 +241,44 @@ php artisan serve
 
 ---
 
-## 13. Default Seeder Accounts
-
-The following accounts are automatically created using database seeders for testing purposes:
+## 11. Default Seeder Accounts
 
 | Role     | Email                                                   | Password  |
 | -------- | ------------------------------------------------------- | --------- |
 | Admin    | [admin@marketing.com](mailto:admin@marketing.com)       | 123456789 |
 | Customer | [customer@marketing.com](mailto:customer@marketing.com) | 123456789 |
 
-> You may modify these credentials directly in the seeder files if needed.
+Credentials can be changed directly in the seeder files.
 
 ---
 
-## 14. Access Control & Security
+## 12. Security & Guarding
 
-* Role-based access control is enforced using middleware
-* Admin and Customer have strictly separated routes and permissions
-* Unauthorized access to restricted endpoints returns proper HTTP status codes (401 / 403)
-* Invalid transaction actions are blocked at controller and domain logic level
+The system explicitly blocks invalid actions, including:
 
----
-
-## 15. Guard & Negative Test Scenarios
-
-The system explicitly guards against invalid actions, including:
-
-* Customer accessing admin-only API endpoints
+* Customers accessing admin routes
 * Paying cancelled or expired transactions
-* Confirming transactions that are not in `awaiting_payment` state
-* Accessing transactions not owned by the authenticated user
+* Confirming transactions in invalid states
+* Accessing transactions owned by other users
+* Logging in with an invalid auth method (Google vs email)
 
-These scenarios are documented and testable via the Postman collection.
-
----
-
-## 16. Project Scope & Limitations
-
-* Payment gateway integration is **intentionally excluded**
-* Manual payment confirmation is used to focus on:
-
-  * Transaction state machine
-  * Authorization rules
-  * Admin verification workflow
-
-This design aligns with the scope of a technical assessment project.
+Authorization is enforced at route, controller, and domain logic levels.
 
 ---
 
-## 17. Project Status
+## 13. Project Scope
 
-* Core features: ✅ Completed
-* API documentation: ✅ Published
-* Optional enhancements (SSO, external payment gateway): ❌ Not implemented
-* Codebase is structured, readable, and ready for extension
+* Payment gateway integration is intentionally excluded
+* Focus is placed on:
+
+  * Transaction correctness
+  * Authorization safety
+  * Maintainable backend structure
+
+This aligns with the scope of a technical assessment project.
 
 ---
 
-## 18. License
+## 14. License
 
-This project is open-sourced under the **MIT License**.
+MIT License
