@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShopProductController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
@@ -57,6 +58,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/transactions/{transaction}', [AdminTransactionController::class, 'update'])->name('transactions.update');
     Route::get('/transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
     Route::get('/transactions/{transaction}/invoice', [AdminTransactionController::class, 'invoice'])->name('transactions.invoice');
+
+    Route::get('/shop-products', [ShopProductController::class, 'index'])->name('shop-products.index');
+    Route::post('/shop-products', [ShopProductController::class, 'store'])->name('shop-products.store');
+    Route::put('/shop-products/{shopProduct}', [ShopProductController::class, 'update'])->name('shop-products.update');
+    Route::delete('/shop-products/{shopProduct}', [ShopProductController::class, 'destroy'])->name('shop-products.destroy');
 });
 
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {

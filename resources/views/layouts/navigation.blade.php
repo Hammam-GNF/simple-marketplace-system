@@ -56,6 +56,10 @@
                             <x-nav-link :href="route('admin.transactions.index')" :active="request()->routeIs('admin.transactions.*')">
                                 {{ __('Transactions') }}
                             </x-nav-link>
+
+                            <x-nav-link :href="route('admin.shop-products.index')" :active="request()->routeIs('admin.shop-products.*')">
+                                {{ __('Shop Products') }}
+                            </x-nav-link>
                         @endif
 
                     <!-- Customer -->
@@ -156,6 +160,10 @@
 
                 <x-responsive-nav-link :href="route('admin.transactions.index')">
                     Transactions
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.shop-products.index')">
+                    Shop Products
                 </x-responsive-nav-link>
             @endif
 
